@@ -14,13 +14,34 @@ struct BTreeIt {
 };
 
 template< class T, size_t K >
-T value(BTreeIt< T, K > it);
+T value(BTreeIt< T, K > it)
+{
+  return it.current->val[it.s];
+}
 
 template< class T, size_t K >
-BTree< T, K > * minimum(BTree< T, K > * root);
+BTree< T, K > * minimum(BTree< T, K > * root)
+{
+  if (!root) {
+    return nullptr;
+  }
+  while (root->childs[0]) {
+    root = root->childs[0];
+  }
+  return root;
+}
 
 template< class T, size_t K >
-BTree< T, K > * maximum(BTree< T, K > * root);
+BTree< T, K > * maximum(BTree< T, K > * root)
+{
+  if (!root) {
+    return nullptr;
+  }
+  while (root->childs[K]) {
+    root = root->childs[K];
+  }
+  return root;
+}
 
 template< class T, size_t K >
 BTreeIt< T, K > next(BTreeIt< T, K > it);
