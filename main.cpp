@@ -44,16 +44,102 @@ BTree< T, K > * maximum(BTree< T, K > * root)
 }
 
 template< class T, size_t K >
-BTreeIt< T, K > next(BTreeIt< T, K > it);
+BTreeIt< T, K > next(BTreeIt< T, K > it)
+{
+  BTree< T, K > * next = it.current;
+  size_t s = it.s;
+  if (!next) {
+    return it;
+  }
+
+  if (s < K - 1) {
+    if (next->childs[s + 1]) {
+      next = next->childs[s + 1];
+      next = minimum(next);
+      s = 0;
+    } else {
+      ++s;
+    }
+  } else {
+    if (next->childs[s + 1]) {
+      next = next->childs[s + 1];
+      next = minimum(next);
+      s = 0;
+    } else {
+      BTree< T, K > * parent = next->parent;
+      while (parent) {
+        if (parent->childs[K] != next) {
+          for (size_t i = 0; i < K; ++i) {
+            if (parent->childs[i] == next) {
+              s = i;
+              break;
+            }
+          }
+          break;
+        }
+        next = parent;
+        parent = next->parent
+      }
+      next = parent;
+    }
+  }
+  return {s, next};
+}
 
 template< class T, size_t K >
-BTreeIt< T, K > prev(BTreeIt< T, K > it);
+BTreeIt< T, K > prev(BTreeIt< T, K > it)
+{
+  BTree< T, K > * next = it.current;
+  size_t s = it.s;
+  if (!next) {
+    return it;
+  }
+
+  if (s != 0) {
+    if (next->childs[s]) {
+      next = next->childs[s];
+      next = maximum(next);
+      s = K - 1;
+    } else {
+      --s;
+    }
+  } else {
+    if (next->childs[0]) {
+      next = next->childs[0];
+      next = maximum(next);
+      s = K - 1;
+    } else {
+      BTree< T, K > * parent = next->parent;
+      while (parent) {
+        if (parent->childs[0] != next) {
+          for (size_t i = K; i > 0; --i) {
+            if (parent->childs[i] == next) {
+              s = i - 1;
+              break;
+            }
+          }
+          break;
+        }
+        next = parent;
+        parent = next->parent
+      }
+      next = parent;
+    }
+  }
+  return {s, next};
+}
 
 template< class T, size_t K >
-bool hasNext(BTreeIt< T, K > it);
+bool hasNext(BTreeIt< T, K > it)
+{
+  return next(it).current;
+}
 
 template< class T, size_t K >
-bool hasNext(BTreeIt< T, K > it);
+bool hasNext(BTreeIt< T, K > it)
+{
+  return prev(it).current;
+}
 
 int main()
 {}
